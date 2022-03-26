@@ -1,8 +1,25 @@
-package utils;
+package com.utils;
+
+import com.pdc.Data;
+import com.pdc.Pair;
 
 import java.util.*;
 
 public class Helper {
+
+    public static void binaryInsertionSort(double distArray[], Pair sortedDistance[], Pair p, int i)
+    {
+        double dist = p.distance;
+        Data d = p.data;
+
+        int j = Math.abs(Arrays.binarySearch(distArray, 0, i, dist) + 1);
+
+        System.arraycopy(distArray, j, distArray, j + 1, i - j);
+        System.arraycopy(sortedDistance, j, sortedDistance, j + 1, i - j);
+
+        distArray[j] = dist;
+        sortedDistance[j] = p;
+    }
 
     public static String mostFrequent(List<String> l)
     {

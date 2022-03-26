@@ -2,7 +2,7 @@ package com.processors;
 
 import com.pdc.Data;
 import com.pdc.Pair;
-import utils.Helper;
+import com.utils.Helper;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -10,7 +10,7 @@ import java.util.concurrent.*;
 public class KNNSortingProcessor extends Thread {
     public int k;
     public BlockingQueue blockingQueue;
-    public List<Pair> sortedDistance = new ArrayList<Pair>();
+    public Pair [] sortedDistance;
     public int countToWait;
     public String FinalLabel = "";
 
@@ -22,32 +22,34 @@ public class KNNSortingProcessor extends Thread {
 
     @Override
     public void run() {
-        int count = 0;
-        while(count < countToWait) {
+        int itr = 0;
+        double [] distArray = new double[countToWait];
+        sortedDistance = new Pair[countToWait];
+        Arrays.fill(distArray, 0);
+        Arrays.fill(sortedDistance, new Pair(new Data(0, 0, 0, 0, ""), 0));
 
+        while(itr < countToWait) {
             Pair pair = null;
             try {
                 pair = (Pair) blockingQueue.take();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            this.sortedDistance.add(pair);
-            count++;
-        }
-
-
-        Collections.sort(sortedDistance, new Comparator<Pair>() {
-            public int compare(Pair p1, Pair p2) {
-                return p1.compareTo(p2);
+            if(pair != null) {
+                Helper.binaryInsertionSort(distArray, sortedDistance, pair, itr);
             }
-        });
+
+            itr++;
+        }
 
 //        System.out.println("\n" + sortedDistance.size() + "\t" + sortedDistance.get(0).distance);
 
 
         List<String> labels = new ArrayList<>();
 
-        sortedDistance.subList(0, k).forEach((d) -> {
+        List<Pair> sortedDistanceList = Arrays.asList(sortedDistance);
+
+        sortedDistanceList.subList(0, k).forEach((d) -> {
             labels.add(d.data.variety);
         });
 

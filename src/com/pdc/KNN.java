@@ -60,15 +60,12 @@ public class KNN {
         start = Calendar.getInstance().getTimeInMillis();
         List<Data> result = new ArrayList<>();
 
-//        testData.forEach();
         testData.parallelStream().forEach((testPoint) -> {
             BlockingQueue<Pair> q = new LinkedBlockingQueue<>();
             KNNDistanceProcessor knnDistance = new KNNDistanceProcessor(q, trainData, testPoint);
-//            knnDistance.join()
             knnDistance.start();
 
             KNNSortingProcessor knnSorting = new KNNSortingProcessor(q, trainData.size(), this.k);
-//            knnSorting.run()
             knnSorting.start();
 
             try {
@@ -86,10 +83,6 @@ public class KNN {
         end = Calendar.getInstance().getTimeInMillis();
 
         System.out.println("Time Parallel: " + (end - start));
-
-        result.forEach((r) -> {
-            //System.out.println(r.sepalLength + "," + r.sepalWidth + "," + r.petalLength + "," + r.petalWidth + "," + r.variety);
-        });
     }
 
     public void classifySerial() {
@@ -113,9 +106,5 @@ public class KNN {
         end = Calendar.getInstance().getTimeInMillis();
 
         System.out.println("Time Serial: " + (end - start));
-
-        result.forEach((r) -> {
-            //System.out.println(r.sepalLength + "," + r.sepalWidth + "," + r.petalLength + "," + r.petalWidth + "," + r.variety);
-        });
     }
 }
